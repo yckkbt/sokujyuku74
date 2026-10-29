@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 74 - Water Shortages</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Lato:wght@400;700;900&display=swap');
+  :root{--blue:#1a4fa0;--orange:#e8630a;--green:#1a7a3c;--light-blue:#e8f0fb;--border:#e0e4ea;--bg:#f0f2f5}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:#222}
+  .header{background:var(--blue);color:white;padding:20px 24px 16px}
+  .header-top{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .unit-badge{background:var(--orange);color:white;font-family:'Lato',sans-serif;font-weight:900;font-size:13px;padding:3px 10px;border-radius:20px}
+  .header h1{font-size:17px;font-weight:900}
+  .header-sub{font-size:13px;opacity:.75;margin-top:2px}
+  .header-bar{height:4px;background:var(--orange)}
+  .steps-nav{background:white;border-bottom:1px solid var(--border);display:flex;overflow-x:auto}
+  .step-btn{flex:1;min-width:80px;padding:12px 8px;border:none;background:none;font-family:'Noto Sans JP',sans-serif;font-size:12px;font-weight:700;color:#888;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}
+  .step-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+  .step-btn:hover{background:var(--light-blue)}
+  .step-content{display:none;max-width:720px;margin:0 auto;padding:24px 20px 60px}
+  .step-content.active{display:block}
+  .listen-card{background:white;border-radius:12px;border:1px solid var(--border);padding:28px 24px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .listen-icon{font-size:48px;margin-bottom:12px}
+  .listen-title{font-size:18px;font-weight:900;margin-bottom:6px}
+  .listen-sub{font-size:13px;color:#888;margin-bottom:20px}
+  audio{width:100%;margin-top:8px}
+  .para-card{background:white;border-radius:12px;border:1px solid var(--border);padding:24px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .para-num{display:inline-block;background:var(--blue);color:white;font-family:'Lato',sans-serif;font-weight:900;font-size:12px;padding:2px 10px;border-radius:20px;margin-bottom:12px}
+  .para-en{font-family:'Lato',sans-serif;font-size:15px;line-height:1.9;margin-bottom:16px;color:#111}
+  .para-en em{font-style:normal;background:#fff3cd;padding:0 2px;border-radius:3px}
+  .para-ja{font-size:13px;line-height:1.9;color:#555;border-top:1px solid var(--border);padding-top:14px}
+  .box{border-radius:8px;padding:14px 16px;margin-top:14px;font-size:13px;line-height:1.8}
+  .vocab-box{background:#f0f7ff;border-left:4px solid var(--blue)}
+  .idiom-box{background:#fff5ee;border-left:4px solid var(--orange)}
+  .grammar-box{background:#f0fff4;border-left:4px solid var(--green)}
+  .box-title{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;opacity:.7}
+  .check-q{background:#fafafa;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-top:14px;font-size:13px}
+  .check-q-label{font-weight:700;color:var(--blue);font-size:12px;margin-bottom:6px}
+  .quiz-card{background:white;border-radius:12px;border:1px solid var(--border);padding:22px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .quiz-q{font-size:15px;font-weight:700;margin-bottom:16px;line-height:1.6}
+  .quiz-opts{display:flex;flex-direction:column;gap:10px}
+  .quiz-opt{padding:12px 16px;border:2px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px;transition:all .15s;text-align:left;background:white;font-family:'Noto Sans JP',sans-serif}
+  .quiz-opt:hover{border-color:var(--blue);background:var(--light-blue)}
+  .quiz-opt.correct{border-color:var(--green);background:#f0fff4;color:var(--green)}
+  .quiz-opt.wrong{border-color:#e53e3e;background:#fff5f5;color:#c53030}
+  .quiz-fb{margin-top:12px;font-size:13px;padding:10px 14px;border-radius:8px;display:none;line-height:1.7}
+  .quiz-fb.show{display:block}
+  .quiz-fb.ok{background:#f0fff4;color:var(--green)}
+  .quiz-fb.ng{background:#fff5f5;color:#c53030}
+  .quiz-score{text-align:center;padding:24px;background:white;border-radius:12px;border:1px solid var(--border);margin-top:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .score-num{font-size:48px;font-weight:900;color:var(--blue);font-family:'Lato',sans-serif}
+  .retry-btn{margin-top:16px;padding:12px 32px;background:var(--blue);color:white;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif}
+  .fc-wrap{max-width:400px;margin:0 auto}
+  .fc-card{background:white;border-radius:16px;border:1px solid var(--border);min-height:200px;display:flex;align-items:center;justify-content:center;text-align:center;padding:32px 24px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:transform .1s;user-select:none;margin-bottom:16px}
+  .fc-card:active{transform:scale(.97)}
+  .fc-front{font-family:'Lato',sans-serif;font-size:22px;font-weight:700;color:var(--blue)}
+  .fc-back{display:none}
+  .fc-back-en{font-family:'Lato',sans-serif;font-size:18px;font-weight:700;color:var(--blue);margin-bottom:8px}
+  .fc-back-ja{font-size:15px;color:#555;margin-bottom:12px}
+  .fc-back-ex{font-size:13px;color:#777;font-style:italic;line-height:1.7}
+  .fc-hint{font-size:12px;color:#aaa;margin-bottom:16px;text-align:center}
+  .fc-btns{display:flex;gap:12px;justify-content:center;margin-bottom:24px}
+  .fc-btn{padding:10px 24px;border:2px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'Noto Sans JP',sans-serif;background:white;transition:all .15s}
+  .fc-btn.know{border-color:var(--green);color:var(--green)}
+  .fc-btn.know:hover{background:var(--green);color:white}
+  .fc-btn.review{border-color:var(--orange);color:var(--orange)}
+  .fc-btn.review:hover{background:var(--orange);color:white}
+  .fc-progress{font-size:13px;color:#888;text-align:center;margin-bottom:16px}
+  .fc-done{text-align:center;padding:32px 24px;background:white;border-radius:12px;border:1px solid var(--border)}
+  .step-header{font-size:16px;font-weight:900;color:var(--blue);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--light-blue)}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <span class="unit-badge">Unit 74</span>
+    <h1>Water Shortages</h1>
+  </div>
+  <div class="header-sub">水不足</div>
+</div>
+<div class="header-bar"></div>
+
+<nav class="steps-nav">
+  <button class="step-btn active" onclick="showStep(1)">🎧 Step 1 Listen</button>
+  <button class="step-btn" onclick="showStep(2)">📖 Step 2 Read</button>
+  <button class="step-btn" onclick="showStep(3)">✏️ Step 3 Quiz</button>
+  <button class="step-btn" onclick="showStep(4)">🃏 Step 4 Flashcards</button>
+</nav>
+
+<!-- STEP 1 -->
+<div class="step-content active" id="step1">
+  <div class="listen-card">
+    <div class="listen-icon">🎧</div>
+    <div class="listen-title">Unit 74 — Water Shortages</div>
+    <div class="listen-sub">音声を聞いてから、英文を読もう</div>
+    <audio controls src="sokujukure220_eibun74.mp3"></audio>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step-content" id="step2">
+  <div class="step-header">📖 英文を読む</div>
+
+  <!-- Para 1 -->
+  <div class="para-card">
+    <span class="para-num">Para 1</span>
+    <div class="para-en">
+      Water is something people in Japan <em>count on</em> having every day. The full extent of the world's water crisis has not yet <em>dawned on</em> most people. But we cannot <em>beat around the bush</em>: It is already a major problem. The UN says that four billion people experience severe water shortages for at least one month each year. As long as current trends continue, half of the world's population could be living in areas facing water scarcity by 2025.
+    </div>
+    <div class="para-ja">
+      水は日本の人々が毎日当たり前のように頼っているものだ。世界の水危機の全貌は、まだほとんどの人にはわかっていない。しかし遠回しに言っていられない。それはすでに深刻な問題だ。国連によると、40億人が毎年少なくとも1か月間、深刻な水不足を経験している。現在の傾向が続く限り、2025年までに世界の人口の半分が水不足に直面する地域に住んでいる可能性がある。
+    </div>
+    <div class="box vocab-box">
+      <div class="box-title">📘 Vocabulary</div>
+      <strong>extent</strong>（程度、範囲）／ <strong>severe</strong>（深刻な）／ <strong>scarcity</strong>（不足、欠乏）／ <strong>crisis</strong>（危機）／ <strong>trend</strong>（傾向）
+    </div>
+    <div class="box idiom-box">
+      <div class="box-title">🔑 Idiom / Phrase</div>
+      <strong>count on [upon] ~</strong>：〜を当てにする、〜に頼る<br>
+      例）You can count on my help.（私の助けを当てにしていいよ。）<br><br>
+      <strong>dawn on ~</strong>：〜にとって（次第に）わかるようになる<br>
+      例）It suddenly dawned on me that I had no money.（お金がないことにふと気づいた。）<br><br>
+      <strong>beat around [about] the bush</strong>：遠回しに言う、核心を避ける<br>
+      例）Stop beating around the bush and tell me what you want.（遠回しに言うのをやめて、何が欲しいか教えてくれ。）
+    </div>
+    <div class="check-q">
+      <div class="check-q-label">🔍 CHECK</div>
+      国連が述べている水不足の現状はどのようなものか？<br>
+      →40億人が毎年少なくとも1か月間、深刻な水不足を経験しているということ。
+    </div>
+  </div>
+
+  <!-- Para 2 -->
+  <div class="para-card">
+    <span class="para-num">Para 2</span>
+    <div class="para-en">
+      The global population needs water to survive, and we won't <em>make it</em> if something is not done about water shortages. <em>Contrary to</em> what some may wish, we cannot expect the problem to get better <em>independent of</em> human action. We must do something <em>at once</em>.
+    </div>
+    <div class="para-ja">
+      世界の人口は生き残るために水を必要としており、水不足に対して何かしなければ私たちはうまくやっていけないだろう。一部の人が望むかもしれないこととは反して、人間の行動なしに問題が良くなることを期待することはできない。私たちはすぐに行動しなければならない。
+    </div>
+    <div class="box idiom-box">
+      <div class="box-title">🔑 Idiom / Phrase</div>
+      <strong>make it</strong>：うまくいく、間に合う（口語）<br>
+      例）I'm sorry I couldn't make it to your party.（あなたのパーティーに行けなくてごめんなさい。）<br><br>
+      <strong>contrary to ~</strong>：〜に反して<br>
+      例）Contrary to my expectations, she passed the exam.（私の予想に反して、彼女は試験に合格した。）<br><br>
+      <strong>independent of ~</strong>：〜に頼らない、〜から独立した<br>
+      例）The report was prepared independent of outside influence.（その報告書は外部の影響を受けずに作成された。）<br><br>
+      <strong>at once</strong>：すぐに（= immediately / right away）<br>
+      例）The doctor said I should go to hospital at once.（医師はすぐに病院へ行くべきだと言った。）
+    </div>
+    <div class="check-q">
+      <div class="check-q-label">🔍 CHECK</div>
+      筆者がパラグラフ2で強調していることは何か？<br>
+      →水不足の問題は人間の行動なしには改善されず、すぐに何か行動しなければならないということ。
+    </div>
+  </div>
+
+  <!-- Para 3 -->
+  <div class="para-card">
+    <span class="para-num">Para 3</span>
+    <div class="para-en">
+      One solution is conservation. In Australia, the driest continent after Antarctica, many regions are constantly short of water. To <em>compensate for</em> these shortages, the government is <em>appealing to</em> its citizens <em>for</em> water conservation efforts. Water restrictions apply to many parts of the population. For example, people are not allowed to water their lawns or wash their cars <em>on</em> certain days.
+    </div>
+    <div class="para-ja">
+      解決策の1つは節水だ。南極大陸に次いで最も乾燥した大陸であるオーストラリアでは、多くの地域が常に水不足に悩んでいる。こうした不足を補うために、政府は国民に節水への取り組みを訴えている。多くの住民に水の使用制限が適用されている。たとえば、特定の日には芝生への水やりや洗車が禁止されている。
+    </div>
+    <div class="box vocab-box">
+      <div class="box-title">📘 Vocabulary</div>
+      <strong>conservation</strong>（節約、保護）／ <strong>continent</strong>（大陸）／ <strong>constantly</strong>（常に）／ <strong>restriction</strong>（制限）／ <strong>lawn</strong>（芝生）
+    </div>
+    <div class="box idiom-box">
+      <div class="box-title">🔑 Idiom / Phrase</div>
+      <strong>compensate for ~</strong>：〜を埋め合わせる、〜を補償する<br>
+      例）Nothing can compensate for the loss of a loved one.（愛する人を失ったことは何事によっても埋め合わせられない。）<br><br>
+      <strong>appeal to A for B</strong>：BのためにAに訴える<br>
+      例）The charity appealed to the public for donations.（その慈善団体は寄付を求めて大衆に訴えた。）<br><br>
+      <strong>on ~</strong>：〜に（特定の日の朝・晩などに用いる）<br>
+      例）on certain days（特定の日に）／ on Sunday morning（日曜日の朝に）
+    </div>
+    <div class="check-q">
+      <div class="check-q-label">🔍 CHECK</div>
+      オーストラリアで行われている水不足への対策を具体的に説明せよ。<br>
+      →政府が国民に節水を訴え、多くの住民に水の使用制限を設けている。例えば特定の日には芝生への水やりや洗車が禁止されている。
+    </div>
+  </div>
+
+  <!-- Para 4 -->
+  <div class="para-card">
+    <span class="para-num">Para 4</span>
+    <div class="para-en">
+      Another solution is technology. Many areas that face water scarcity have little electricity, <em>much less</em> *infrastructure; and what water supply equipment they have is often <em>out of order</em>. Developed nations need to <em>stand by</em> less developed regions and supply them with pumps, filters, and other devices that <em>are suited to</em> their environment. And *desalination technology, <em>which</em> can make drinkable water from salt water, must be improved.
+    </div>
+    <div class="para-ja">
+      もう1つの解決策は技術だ。水不足に直面している地域の多くは電力が乏しく、インフラはなおさら整っていない。そして持っている給水設備も故障していることが多い。先進国は発展途上地域の味方となり、ポンプ・フィルターなどその地域の環境に適した機器を供給する必要がある。また、塩水から飲料水を作ることができる脱塩技術を改善しなければならない。
+    </div>
+    <div class="box vocab-box">
+      <div class="box-title">📘 Vocabulary</div>
+      <strong>infrastructure</strong>（社会の基盤、インフラ）／ <strong>desalination</strong>（脱塩）／ <strong>drinkable</strong>（飲料可能な）／ <strong>filter</strong>（フィルター、ろ過器）／ <strong>device</strong>（機器、装置）
+    </div>
+    <div class="box idiom-box">
+      <div class="box-title">🔑 Idiom / Phrase</div>
+      <strong>much [still] less ~</strong>：（否定文に続いて）まして〜ない<br>
+      例）He can't speak English, much less French.（彼は英語も話せない、まして仏語などは言うまでもない。）<br><br>
+      <strong>out of order</strong>：故障して、順序がくるって<br>
+      例）The elevator is out of order today.（今日エレベーターは故障している。）<br><br>
+      <strong>stand by ~</strong>：〜の味方をする、〜を支持する<br>
+      例）I'll stand by you no matter what.（何があってもあなたの味方をします。）<br><br>
+      <strong>be suited to ~</strong>：〜に適した<br>
+      例）This job is well suited to her talents.（この仕事は彼女の才能によく適している。）
+    </div>
+    <div class="grammar-box box">
+      <div class="box-title">📗 Grammar</div>
+      <strong>関係詞の非制限用法</strong>（継続用法）<br>
+      And desalination technology, <u>which can make drinkable water from salt water</u>, must be improved.<br>
+      → コンマで区切られた which 節が、直前の専門用語 "desalination technology" を補足説明している。非制限用法の関係代名詞は「そしてそれは〜」と訳すとわかりやすい。
+    </div>
+    <div class="check-q">
+      <div class="check-q-label">🔍 CHECK</div>
+      先進国が水不足の地域に対してできることとして本文が述べていることを2点答えよ。<br>
+      →①ポンプ・フィルターなど環境に適した機器を供給すること。②塩水から飲料水を作る脱塩技術を改善すること。
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step-content" id="step3">
+  <div class="step-header">✏️ 理解度チェッククイズ</div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q1. According to the UN (Para 1), how many people suffer from severe water shortages?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong',1)">A. One billion people for over six months a year</button>
+      <button class="quiz-opt" onclick="answer(this,'correct',1)">B. Four billion people for at least one month each year</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong',1)">C. Half of the world's population every day</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong',1)">D. Two billion people for at least three months each year</button>
+    </div>
+    <div class="quiz-fb" id="fb1">✅ 正解！国連によると40億人が毎年少なくとも1か月間、深刻な水不足を経験しています（Para 1）。</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q2. What does "beat around the bush" mean?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong',2)">A. To work very hard outdoors</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong',2)">B. To search for water in nature</button>
+      <button class="quiz-opt" onclick="answer(this,'correct',2)">C. To avoid getting to the main point; to speak indirectly</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong',2)">D. To solve a problem quickly</button>
+    </div>
+    <div class="quiz-fb" id="fb2">✅ 正解！"beat around the bush"は「遠回しに言う、核心を避ける」という意味です（Para 1）。</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q3. What does Para 2 say about solving the water problem without human action?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong',3)">A. It will solve itself naturally over time</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong',3)">B. Technology alone will fix the problem</button>
+      <button class="quiz-opt" onclick="answer(this,'correct',3)">C. We cannot expect the problem to improve without human action</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong',3)">D. Only governments can fix the problem</button>
+    </div>
+    <div class="quiz-fb" id="fb3">✅ 正解！人間の行動なしに問題が改善されることは期待できないと述べています（Para 2）。</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q4. What specific water restrictions does Australia have? (Para 3)</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong',4)">A. People must drink only bottled water</button>
+      <button class="quiz-opt" onclick="answer(this,'correct',4)">B. People are not allowed to water their lawns or wash their cars on certain days</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong',4)">C. People must collect rainwater for all household use</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong',4)">D. People are allowed to use water only for cooking</button>
+    </div>
+    <div class="quiz-fb" id="fb4">✅ 正解！特定の日には芝生への水やりや洗車が禁止されています（Para 3）。</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q5. What is "desalination technology" mentioned in Para 4?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,'wrong',5)">A. Technology that recycles used water into electricity</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong',5)">B. Technology that purifies underground water</button>
+      <button class="quiz-opt" onclick="answer(this,'correct',5)">C. Technology that can make drinkable water from salt water</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong',5)">D. Technology that filters contaminated river water</button>
+    </div>
+    <div class="quiz-fb" id="fb5">✅ 正解！脱塩技術とは、塩水から飲料水を作ることができる技術のことです（Para 4）。</div>
+  </div>
+
+  <div class="quiz-score" id="quiz-score" style="display:none">
+    <div class="score-num" id="score-num">0/5</div>
+    <div style="margin-top:8px;font-size:15px;color:#555">お疲れ様でした！</div>
+    <button class="retry-btn" onclick="retryQuiz()">もう一度挑戦する</button>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step-content" id="step4">
+  <div class="step-header">🃏 イディオム・フレーズ フラッシュカード</div>
+  <div class="fc-wrap">
+    <div class="fc-progress" id="fc-progress">1 / 13</div>
+    <div class="fc-hint">タップしてうら面を見る</div>
+    <div class="fc-card" id="fc-card" onclick="flipCard()">
+      <div class="fc-front" id="fc-front"></div>
+      <div class="fc-back" id="fc-back"></div>
+    </div>
+    <div class="fc-btns">
+      <button class="fc-btn review" onclick="markCard(false)">🔁 もう一度</button>
+      <button class="fc-btn know" onclick="markCard(true)">✅ 覚えた！</button>
+    </div>
+    <div class="fc-done" id="fc-done" style="display:none">
+      <div style="font-size:32px;margin-bottom:12px">🎉</div>
+      <div style="font-size:18px;font-weight:900;margin-bottom:8px">全カード完了！</div>
+      <div style="font-size:14px;color:#555;margin-bottom:20px">よく頑張りました！</div>
+      <button class="retry-btn" onclick="shuffleCards()">もう一度やる</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function showStep(n){
+  document.querySelectorAll('.step-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.step-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  document.querySelectorAll('.step-btn')[n-1].classList.add('active');
+}
+
+let scores={},answered={};
+function answer(btn,type,qn){
+  if(answered[qn])return;
+  answered[qn]=true;
+  btn.closest('.quiz-opts').querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');
+  btn.classList.add(type);
+  const fb=document.getElementById('fb'+qn);
+  if(type==='correct'){scores[qn]=1;fb.classList.add('ok','show');}
+  else{scores[qn]=0;fb.textContent='❌ 不正解。本文をもう一度確認しよう！';fb.classList.add('ng','show');}
+  if(Object.keys(answered).length===5)showScore();
+}
+function showScore(){
+  const total=Object.values(scores).reduce((a,b)=>a+b,0);
+  document.getElementById('score-num').textContent=total+'/5';
+  document.getElementById('quiz-score').style.display='block';
+}
+function retryQuiz(){
+  scores={};answered={};
+  document.querySelectorAll('.quiz-opt').forEach(o=>{o.classList.remove('correct','wrong');o.style.pointerEvents='';});
+  document.querySelectorAll('.quiz-fb').forEach(f=>f.classList.remove('show','ok','ng'));
+  document.getElementById('fb1').textContent='✅ 正解！国連によると40億人が毎年少なくとも1か月間、深刻な水不足を経験しています（Para 1）。';
+  document.getElementById('fb2').textContent='✅ 正解！"beat around the bush"は「遠回しに言う、核心を避ける」という意味です（Para 1）。';
+  document.getElementById('fb3').textContent='✅ 正解！人間の行動なしに問題が改善されることは期待できないと述べています（Para 2）。';
+  document.getElementById('fb4').textContent='✅ 正解！特定の日には芝生への水やりや洗車が禁止されています（Para 3）。';
+  document.getElementById('fb5').textContent='✅ 正解！脱塩技術とは、塩水から飲料水を作ることができる技術のことです（Para 4）。';
+  document.getElementById('quiz-score').style.display='none';
+}
+
+const cards=[
+  {front:'count on [upon] ~',ja:'〜を当てにする、〜に頼る',ex:"You can count on my help.\n（私の助けを当てにしていいよ。）"},
+  {front:'dawn on ~',ja:'〜にとって（次第に）わかるようになる',ex:"It suddenly dawned on me that I had no money.\n（お金がないことにふと気づいた。）"},
+  {front:'beat around the bush',ja:'遠回しに言う、核心を避ける',ex:"Stop beating around the bush and tell me what you want.\n（遠回しに言うのをやめて、何が欲しいか教えてくれ。）"},
+  {front:'make it',ja:'うまくいく、間に合う（口語）',ex:"I'm sorry I couldn't make it to your party.\n（あなたのパーティーに行けなくてごめんなさい。）"},
+  {front:'contrary to ~',ja:'〜に反して',ex:"Contrary to my expectations, she passed the exam.\n（私の予想に反して、彼女は試験に合格した。）"},
+  {front:'independent of ~',ja:'〜に頼らない、〜から独立した',ex:"The report was prepared independent of outside influence.\n（その報告書は外部の影響を受けずに作成された。）"},
+  {front:'at once',ja:'すぐに（= immediately）',ex:"The doctor said I should go to hospital at once.\n（医師はすぐに病院へ行くべきだと言った。）"},
+  {front:'compensate for ~',ja:'〜を埋め合わせる、〜を補償する',ex:"Nothing can compensate for the loss of a loved one.\n（愛する人を失ったことは何事によっても埋め合わせられない。）"},
+  {front:'appeal to A for B',ja:'BのためにAに訴える',ex:"The charity appealed to the public for donations.\n（その慈善団体は寄付を求めて大衆に訴えた。）"},
+  {front:'much [still] less ~',ja:'（否定文に続いて）まして〜ない',ex:"He can't speak English, much less French.\n（英語も話せない、まして仏語などは言うまでもない。）"},
+  {front:'out of order',ja:'故障して、順序がくるって',ex:"The elevator is out of order today.\n（今日エレベーターは故障している。）"},
+  {front:'stand by ~',ja:'〜の味方をする、〜を支持する',ex:"I'll stand by you no matter what.\n（何があってもあなたの味方をします。）"},
+  {front:'be suited to ~',ja:'〜に適した',ex:"This job is well suited to her talents.\n（この仕事は彼女の才能によく適している。）"},
+];
+
+let deck=[...cards],ci=0,flipped=false;
+
+function shuffleCards(){
+  deck=[...cards].sort(()=>Math.random()-.5);
+  ci=0;flipped=false;
+  document.getElementById('fc-done').style.display='none';
+  document.getElementById('fc-card').style.display='flex';
+  document.querySelector('.fc-btns').style.display='flex';
+  document.querySelector('.fc-hint').style.display='block';
+  renderCard();
+}
+function renderCard(){
+  if(ci>=deck.length){
+    document.getElementById('fc-card').style.display='none';
+    document.querySelector('.fc-btns').style.display='none';
+    document.querySelector('.fc-hint').style.display='none';
+    document.getElementById('fc-done').style.display='block';
+    return;
+  }
+  const c=deck[ci];flipped=false;
+  document.getElementById('fc-front').textContent=c.front;
+  document.getElementById('fc-front').style.display='block';
+  document.getElementById('fc-back').innerHTML=`<div class="fc-back-en">${c.front}</div><div class="fc-back-ja">${c.ja}</div><div class="fc-back-ex">${c.ex.replace(/\n/g,'<br>')}</div>`;
+  document.getElementById('fc-back').style.display='none';
+  document.getElementById('fc-progress').textContent=(ci+1)+' / '+deck.length;
+}
+function flipCard(){
+  flipped=!flipped;
+  document.getElementById('fc-front').style.display=flipped?'none':'block';
+  document.getElementById('fc-back').style.display=flipped?'block':'none';
+}
+function markCard(known){
+  if(!flipped)flipCard();
+  setTimeout(()=>{if(!known)deck.push(deck[ci]);ci++;renderCard();},300);
+}
+shuffleCards();
+</script>
+</body>
+</html>
